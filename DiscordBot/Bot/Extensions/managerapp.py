@@ -32,7 +32,7 @@ class ManagerApp(commands.Cog):
         self.password = password
 
 
-        with open("Temp\\admin\\data", 'r') as file:
+        with open("Temp/admin/data", 'r') as file:
             for line in file:
                 self.authorizedUsers.append(line.strip('\n'))
 
@@ -55,7 +55,7 @@ class ManagerApp(commands.Cog):
             if 'load' in userInput or 'refresh' in userInput:
                 self.authorizedUsers = []
 
-                with open("Temp\\admin\\data", 'r') as file:
+                with open("Temp/admin/data", 'r') as file:
                     for line in file:
                         self.authorizedUsers.append(line.strip('\n'))
 
@@ -65,7 +65,7 @@ class ManagerApp(commands.Cog):
                 try:
                     userId = userInput.split(' ')[1]
 
-                    with open("Temp\\admin\\data", 'a') as file:
+                    with open("Temp/admin/data", 'a') as file:
                         file.write(f"{userId}\n")
 
                 except:

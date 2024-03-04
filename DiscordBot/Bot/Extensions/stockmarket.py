@@ -1,15 +1,17 @@
 import discord
 import random
 import datetime
+import os
 import logging
 import requests
 import numpy as np
 import matplotlib.pyplot as plt
+
 from discord.ext import commands
 from discord import app_commands
 from ..Config.config import *
 from discord import Color
-
+from dotenv import load_dotenv
 
 
 class stockMarket(commands.Cog):
@@ -41,7 +43,7 @@ class stockMarket(commands.Cog):
 
         await ctx.response.defer()
 
-        api_url = f'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol={symbol}&market={exchange}&apikey={SM_API_KEY}'
+        api_url = f'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol={symbol}&market={exchange}&apikey={os.environ.get("SM_API_KEY")}'
         raw_df = requests.get(api_url).json()
 
         x = []

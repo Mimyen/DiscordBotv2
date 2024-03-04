@@ -3,6 +3,7 @@ from __future__ import annotations
 import discord
 import logging
 import requests
+import os
 
 from DiscordBot import __version__
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -10,6 +11,7 @@ from pytz import utc
 from .Config import config
 from .Utils.loghandler import DualHandler
 from discord.ext import commands
+from dotenv import load_dotenv
 
 # Extensions (Cogs) that are being used
 extensions = ['DiscordBot.Bot.Extensions.sync',
@@ -34,6 +36,7 @@ class Bot(commands.Bot):
         """
         Initializes the bot
         """
+        load_dotenv()
 
         # Setting up schedulers
         scheduler = AsyncIOScheduler()
@@ -55,11 +58,13 @@ class Bot(commands.Bot):
         Method that is run to start the bot
         """
 
+        token = os.environ.get("DISCORD_TOKEN")
+
         # Handling the logging
         logger = DualHandler()
 
         # Running the bot
-        super().run(config.DISCORD_TOKEN, root_logger=True,
+        super().run(token=token, root_logger=True,
                     reconnect=True, log_handler=logger)
 
 

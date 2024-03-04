@@ -8,3 +8,4 @@ PyNaCl
 openai
 pillow
 matplotlib
+python-dotenv

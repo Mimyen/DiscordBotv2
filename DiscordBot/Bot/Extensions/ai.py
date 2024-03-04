@@ -2,11 +2,13 @@ import discord
 import random
 import datetime
 import logging
+import os
 from discord.ext import commands
 from discord import app_commands
 from ..Config.config import *
 from discord import Color
 from openai import OpenAI
+from dotenv import load_dotenv
 
 
 class ai(commands.Cog):
@@ -18,8 +20,10 @@ class ai(commands.Cog):
         """
         Initializing AI extension
         """
+        load_dotenv()
+
         self.bot = bot
-        self.client = OpenAI(api_key=AI_API_KEY)
+        self.client = OpenAI(api_key=os.environ.get("AI_API_KEY"))
 
 
 
