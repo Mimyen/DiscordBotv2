@@ -1,4 +1,5 @@
 # General
+ICON_URL = "https://cdn.discordapp.com/attachments/1194995669988016218/1200539924085080064/image.png?ex=65c68cee&is=65b417ee&hm=d7dfe03ab65a1acc704c18182bbe2a5ed7a44caddd45394c5488c29c0adc2319&"
 
 # Help Extension
 COMMAND_HELP_NAME = "help"
