@@ -1,7 +1,7 @@
 
 # Function that increments saved log_id
 def changeid() -> int:
-    with open("DiscordBot\\Bot\\Config\\log_id", "r+") as file:
+    with open("DiscordBot/Bot/Config/log_id", "r+") as file:
         bid : int = int(file.read())
 
         file.truncate()

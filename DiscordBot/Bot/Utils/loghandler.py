@@ -23,8 +23,8 @@ class DualHandler(logging.Handler):
         super().__init__()
 
         console_handler = logging.StreamHandler()
-        if date: file_handler = logging.FileHandler(filename=f"Temp\\logs\\discord_{datetime.datetime.now().strftime('%d-%m-%Y_%H%M%S')}.log", encoding='utf-8', mode='w')
-        else: file_handler = logging.FileHandler(filename=f"Temp\\logs\\discord{log.id()}.log", encoding='utf-8', mode='w')
+        if date: file_handler = logging.FileHandler(filename=f"Temp/logs/discord_{datetime.datetime.now().strftime('%d-%m-%Y_%H%M%S')}.log", encoding='utf-8', mode='w')
+        else: file_handler = logging.FileHandler(filename=f"Temp/logs/discord{log.id()}.log", encoding='utf-8', mode='w')
 
         self.handlers = [console_handler, file_handler] 
 
