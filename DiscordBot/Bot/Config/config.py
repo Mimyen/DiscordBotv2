@@ -1,10 +1,4 @@
 # General
-DISCORD_TOKEN = ""
-OWNER_ID = 430051854081064963
-ICON_URL = "https://cdn.discordapp.com/attachments/1194995669988016218/1200539924085080064/image.png?ex=65c68cee&is=65b417ee&hm=d7dfe03ab65a1acc704c18182bbe2a5ed7a44caddd45394c5488c29c0adc2319&"
-AI_API_KEY = "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"
-SM_API_KEY = "I35E1MM6UKAROBUF"
-
 # Help Extension
 COMMAND_HELP_NAME = "help"
 COMMAND_HELP_DESCRIPTION = "Get information about any command"
