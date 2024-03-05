@@ -3,12 +3,14 @@ import discord
 import datetime
 import logging
 import asyncio
+import os
 from youtubesearchpython import VideosSearch
 from discord.ext import commands
 from discord import app_commands
 from ..Config.config import *
 from yt_dlp import YoutubeDL
 from discord import Color
+from dotenv import load_dotenv
 
 
 
@@ -21,6 +23,10 @@ class Music(commands.Cog):
         """
         Initializing Music Extension
         """
+
+        load_dotenv()
+
+        self.OWNER_ID = os.environ.get("OWNER_ID")
 
         self.bot = bot
 
@@ -60,20 +66,20 @@ class Music(commands.Cog):
         if msg["t"] == "INTERACTION_CREATE":
             data = msg["d"]
             command_name = data["data"]["name"]
-            if command_name == "disconnect" and data["member"]["user"]["id"] == OWNER_ID:
+            if command_name == "disconnect" and data["member"]["user"]["id"] == self.OWNER_ID:
                 command_id = data["id"]
                 await self.bot.http.edit_application_command_permissions(self.bot.user.id, self.bot.application_id, command_id, [
                     {
-                        "id": OWNER_ID,
+                        "id": self.OWNER_ID,
                         "type": 1,
                         "permission": True
                     }
                 ])
-            elif command_name == "connect" and data["member"]["user"]["id"] == OWNER_ID:
+            elif command_name == "connect" and data["member"]["user"]["id"] == self.OWNER_ID:
                 command_id = data["id"]
                 await self.bot.http.edit_application_command_permissions(self.bot.user.id, self.bot.application_id, command_id, [
                     {
-                        "id": OWNER_ID,
+                        "id": self.OWNER_ID,
                         "type": 1,
                         "permission": True
                     }
