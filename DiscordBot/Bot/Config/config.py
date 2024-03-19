@@ -141,6 +141,7 @@ CRYPTO_PATH = "Temp/cryptocurrency/"
 
 
 # ManagerApp Extension
+#MANAGER_IP = '192.168.1.11'
 MANAGER_IP = '127.0.0.1'
 MANAGER_PORT = 2222
 

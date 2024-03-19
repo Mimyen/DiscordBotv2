@@ -145,7 +145,27 @@ class ManagerApp(commands.Cog):
                                 # Sends message in a channel
                                 case 'send_message':
                                     try:
-                                        await self.bot.get_guild(int(jsonData['guild_id'])).get_channel(int(jsonData['channel_id'])).send(jsonData['input'])
+                                        try:
+                                            if jsonData['embedded'] == 'true':
+                                                embed = discord.Embed()
+
+                                                embed.description = jsonData['input']
+                                                
+                                                try:
+                                                    if jsonData['color']:
+                                                        embed.color = Color.from_rgb(int(jsonData['color']['r']), int(jsonData['color']['g']), int(jsonData['color']['b']))
+                                                except:
+                                                    pass
+
+                                                try:
+                                                    if jsonData['author'] and jsonData['icon']:
+                                                        embed.set_author(name=jsonData['author'], icon_url=jsonData['icon'])
+                                                except:
+                                                    pass
+
+                                                await self.bot.get_guild(int(jsonData['guild_id'])).get_channel(int(jsonData['channel_id'])).send(embed=embed)
+                                        except Exception as e:
+                                            await self.bot.get_guild(int(jsonData['guild_id'])).get_channel(int(jsonData['channel_id'])).send(jsonData['input'])
 
                                         response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_CORRECT, MANAGER_RESPONSE_OUTPUT: MANAGER_RESPONSE_SEND_MESSAGE_SENT} 
                                     except:
