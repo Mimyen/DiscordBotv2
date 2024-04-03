@@ -6,6 +6,7 @@ import socket
 import asyncio
 import json
 import os
+import re
 from discord.ext import commands
 from discord import app_commands
 from ..Config.config import *
@@ -30,7 +31,6 @@ class ManagerApp(commands.Cog):
         self.authorizedUsers = []
         self.tokens = []
         self.password = password
-
 
         with open("Temp/admin/data", 'r') as file:
             for line in file:
@@ -92,6 +92,7 @@ class ManagerApp(commands.Cog):
 
             try:
                 data = await reader.read(4096)
+                # logging.info(data)
                 message = data.decode('utf-8')
             except Exception as e:
                 logging.error(f"Error reading data: {e}")
@@ -113,7 +114,7 @@ class ManagerApp(commands.Cog):
                                     try:
                                         if await self.__authorize(jsonData['password']):
                                             token = str(random.randint(10000, 99999))
-                                            response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_AUTHORIZED, MANAGER_RESPONSE_OUTPUT: f"Welcome to Mimyen Bot Manager {__version__}v", MANAGER_RESPONSE_TOKEN: token}
+                                            response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_AUTHORIZED, MANAGER_RESPONSE_OUTPUT: f"Welcome to Mimyen Bot Manager API {__version__}v", MANAGER_RESPONSE_TOKEN: token}
                                             self.tokens.append(token)
                                         else:
                                             response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR, MANAGER_RESPONSE_MESSAGE: MANAGER_RESPONSE_INCORRECT_PASSWORD}
@@ -130,15 +131,18 @@ class ManagerApp(commands.Cog):
                                         response_data[MANAGER_RESPONSE_OUTPUT][guild.id] = guild.name
 
                                 # Returns all channels in a guild
-                                case 'getchannels':
+                                case 'gettextchannels':
                                     try:
                                         guildId = int(jsonData['guild_id'])
                                         guild = self.bot.get_guild(guildId)
 
                                         response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_CORRECT, MANAGER_RESPONSE_OUTPUT: {}}                            
 
-                                        for channel in guild.channels:
-                                            response_data[MANAGER_RESPONSE_OUTPUT][channel.id] = channel.name
+                                        for channel in guild.text_channels:
+                                            if channel.category is not None:
+                                                response_data[MANAGER_RESPONSE_OUTPUT][channel.id] = f"{channel.category.name}: {channel.name}"
+                                            else:
+                                                response_data[MANAGER_RESPONSE_OUTPUT][channel.id] = f"{channel.name}"
                                     except:
                                         response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR, MANAGER_RESPONSE_MESSAGE: MANAGER_RESPONSE_INCORRECT_GUILD_ID}
 
@@ -171,7 +175,26 @@ class ManagerApp(commands.Cog):
                                     except:
                                         response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR, MANAGER_RESPONSE_MESSAGE: MANAGER_RESPONSE_SEND_MESSAGE_ERROR}
 
+                                # Returns all members of a guild
+                                case 'getusers':
+                                    try: 
+                                        if jsonData['guild_id']:
 
+                                            response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_CORRECT, MANAGER_RESPONSE_OUTPUT: {}}    
+
+                                            async for member in self.bot.get_guild(int(jsonData['guild_id'])).fetch_members(limit=None):
+                                                response_data[MANAGER_RESPONSE_OUTPUT][member.id] = member.name
+
+                                    except Exception as e:
+                                        response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR, MANAGER_RESPONSE_MESSAGE: MANAGER_RESPONSE_INCORRECT_GUILD_ID}
+
+                                # Returns all members of a guild
+                                case 'getcogs':
+                                    try: 
+                                        pass
+
+                                    except Exception as e:
+                                        response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR}
 
                         else:
                             if jsonData[MANAGER_RESPONSE_MESSAGE] == 'authorize':
@@ -208,7 +231,28 @@ class ManagerApp(commands.Cog):
                 # Prepare a JSON response
                 response = json.dumps(response_data)
 
+                response = response.encode('utf-16', 'surrogatepass').decode('utf-16')
+
+                emoji_pattern = re.compile("["
+                        u"\U0001F600-\U0001F64F"  # emoticons
+                        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                        u"\U00002702-\U000027B0"
+                        u"\U000024C2-\U0001F251"
+                        u"\U0001F900-\U0001F9FF"  # Supplemental Symbols and Pictographs
+                        u"\U0001FA00-\U0001FA6F"  # Chess Symbols
+                        u"\U0001F000-\U0001F02F"  # Mahjong Tiles
+                        u"\U0001F0A0-\U0001F0FF"  # Playing Cards
+                        u"\U00002328"
+                                        "]+", flags=re.UNICODE)
+                
+                decoded_string = response.encode().decode('unicode-escape')
+                buffer = decoded_string.encode('utf-16', 'surrogatepass').decode('utf-16')
+                response = emoji_pattern.sub(r'', buffer)
+
                 # Send the JSON response back to the C++ client
+                # logging.info(response.encode('utf-8'))
                 writer.write(response.encode('utf-8'))
                 await writer.drain()
 
