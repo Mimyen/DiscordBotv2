@@ -183,7 +183,11 @@ class ManagerApp(commands.Cog):
                                             response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_CORRECT, MANAGER_RESPONSE_OUTPUT: {}}    
 
                                             async for member in self.bot.get_guild(int(jsonData['guild_id'])).fetch_members(limit=None):
-                                                response_data[MANAGER_RESPONSE_OUTPUT][member.id] = member.name
+                                                if member.nick is not None:
+                                                    response_data[MANAGER_RESPONSE_OUTPUT][str(member.id)] = [member.name, member.nick]
+                                                    response_data[MANAGER_RESPONSE_OUTPUT][str(member.id)][1] = response_data[MANAGER_RESPONSE_OUTPUT][str(member.id)][1].replace('"', '?.quote?.')
+                                                else:
+                                                    response_data[MANAGER_RESPONSE_OUTPUT][str(member.id)] = [member.name, ""]
 
                                     except Exception as e:
                                         response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR, MANAGER_RESPONSE_MESSAGE: MANAGER_RESPONSE_INCORRECT_GUILD_ID}
@@ -196,6 +200,21 @@ class ManagerApp(commands.Cog):
                                     except Exception as e:
                                         response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_ERROR}
 
+                                case 'kick':
+                                    try:
+                                        if jsonData['guild_id'] and jsonData['user_id']:
+                                            await self.bot.get_guild(int(jsonData['guild_id'])).get_member(int(jsonData['user_id'])).kick(reason="Kicked by bot!")
+                                            response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_CORRECT}    
+                                    except Exception as e:
+                                        logging.info(e)
+
+                                case 'ban':
+                                    try:
+                                        if jsonData['guild_id'] and jsonData['user_id']:
+                                            await self.bot.get_guild(int(jsonData['guild_id'])).get_member(int(jsonData['user_id'])).ban(reason="Banned by bot!")
+                                            response_data = {MANAGER_RESPONSE: MANAGER_RESPONSE_CORRECT}    
+                                    except Exception as e:
+                                        pass
                         else:
                             if jsonData[MANAGER_RESPONSE_MESSAGE] == 'authorize':
                                 try:
@@ -250,6 +269,8 @@ class ManagerApp(commands.Cog):
                 decoded_string = response.encode().decode('unicode-escape')
                 buffer = decoded_string.encode('utf-16', 'surrogatepass').decode('utf-16')
                 response = emoji_pattern.sub(r'', buffer)
+
+                response = response.replace('?.quote?.', '\\"')
 
                 # Send the JSON response back to the C++ client
                 # logging.info(response.encode('utf-8'))
