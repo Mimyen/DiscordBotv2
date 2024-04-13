@@ -15,15 +15,16 @@ from dotenv import load_dotenv
 
 # Extensions (Cogs) that are being used
 extensions = ['DiscordBot.Bot.Extensions.sync',
-              'DiscordBot.Bot.Extensions.pawel',
-              'DiscordBot.Bot.Extensions.music',
-              'DiscordBot.Bot.Extensions.tictactoe',
-              'DiscordBot.Bot.Extensions.tictactoepvp',
-              'DiscordBot.Bot.Extensions.stockmarket',
-              'DiscordBot.Bot.Extensions.managerapp',
-              'DiscordBot.Bot.Extensions.ai',
-              'DiscordBot.Bot.Extensions.help',
-              'DiscordBot.Bot.Extensions.test',]
+              #'DiscordBot.Bot.Extensions.pawel',
+              #'DiscordBot.Bot.Extensions.music',
+              #'DiscordBot.Bot.Extensions.tictactoe',
+              #'DiscordBot.Bot.Extensions.tictactoepvp',
+              #'DiscordBot.Bot.Extensions.stockmarket',
+              'DiscordBot.Bot.Extensions.manager',
+              #'DiscordBot.Bot.Extensions.ai',
+              #'DiscordBot.Bot.Extensions.help',
+              #'DiscordBot.Bot.Extensions.test',
+             ]
 
 
 
@@ -74,14 +75,15 @@ class Bot(commands.Bot):
         Function is called whever bot is ready
         it's an event function, defaulted by parent
         """
+        logger = logging.getLogger('bot.initialize')
 
         # Loading each extension
         for extension in extensions:
             try:
                 await self.load_extension(extension)
-                logging.info(f"Loaded extension {extension}")
+                logger.info(f"Loaded extension {extension}")
             except Exception as e:
-                logging.error(f"{e}")
+                logger.error(f"{e}")
 
         # Changes bot's status
         activity = discord.Streaming(
@@ -89,4 +91,4 @@ class Bot(commands.Bot):
         )
         await super().change_presence(status=discord.Status.idle, activity=activity)
 
-        logging.info(f"Bot is ready!")
+        logger.info(f"Bot is ready!")
