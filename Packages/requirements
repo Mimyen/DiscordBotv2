@@ -9,3 +9,7 @@ openai
 pillow
 matplotlib
 python-dotenv
+flask
+flask_restx
+aiohttp
+aiohttp_wsgi
