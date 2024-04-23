@@ -350,7 +350,7 @@ class Manager(commands.Cog):
                 return output, code
 
 
-        @ns.route('/kick')
+        @ns.route('/kickuser')
         class KickUser(Resource):
 
             @ns.expect(
@@ -462,6 +462,8 @@ class Manager(commands.Cog):
         except Exception as e:
             logger.error(f'Error occured while starting Websocket Server: {e}')
 
+
+
     async def __startHTTPServer(self) -> None:
         # Setup aiohttp web app to run Flask app with aiohttp-wsgi
         app = web.Application()
@@ -478,6 +480,8 @@ class Manager(commands.Cog):
         
         await site.start()
 
+
+
     async def __authorize(self, password: str) -> bool:
         """
         Inner method that authorizes user
@@ -489,6 +493,8 @@ class Manager(commands.Cog):
             return True
         
         return False
+    
+
 
     def authenticate(self, password: str) -> bool:
         """
@@ -501,6 +507,8 @@ class Manager(commands.Cog):
             return True
         
         return False
+    
+
     
     def encodeJSON(self, jsonMSG: any) -> any:
         """Clears string from emotes and unwanted characters and encodes it"""
@@ -529,6 +537,8 @@ class Manager(commands.Cog):
         response = response.encode()
         # logging.info(response)
         return json.loads(response)
+    
+    
 
 async def setup(bot):
     """
